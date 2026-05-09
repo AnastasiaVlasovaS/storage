@@ -13,6 +13,17 @@ public class User {
     private String login;     // логин
     private String password;  // пароль (захешированный)
 
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    private String token;
+
+
     // Геттеры и сеттеры
     public String getLogin() {
         return login;

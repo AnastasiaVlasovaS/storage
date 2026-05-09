@@ -3,10 +3,8 @@ package com.example.cloud.storage.controller;
 import com.example.cloud.storage.FileDto;
 import com.example.cloud.storage.model.User;
 import com.example.cloud.storage.service.FileService;
-import com.example.cloud.storage.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
