@@ -1,46 +1,50 @@
 package com.example.cloud.storage;
 
+import com.example.cloud.storage.repository.UserRepository;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class AuthFilter extends OncePerRequestFilter {
 
-    // Хранилище активных токенов (просто для примера)
-    private static final Set<String> validTokens = ConcurrentHashMap.newKeySet();
+    @Autowired
+    private UserRepository userRepository;
 
-    public static void addToken(String token) {
-        validTokens.add(token);
-    }
-
-    public static void removeToken(String token) {
-        validTokens.remove(token);
-    }
+    private static final Set<String> PUBLIC_PATHS = Set.of(
+            "/login", "/register", "/"
+    );
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
-                                    FilterChain filterChain) throws jakarta.servlet.ServletException, IOException {
-        String token = request.getHeader("auth-token");
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
+
         String path = request.getRequestURI();
 
-        if (path.equals("/login") || path.equals("/register")) {
+        // Пропускаем публичные пути без проверки
+        if (PUBLIC_PATHS.contains(path)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        if (token != null && validTokens.contains(token)) {
-            filterChain.doFilter(request, response);
-        } else {
+        // Проверяем токен
+        String token = request.getHeader("auth-token");
+        if (token == null || userRepository.findByToken(token).isEmpty()) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Нет авторизации");
+            response.getWriter().write("{\"error\": \"Неавторизован\"}");
+            return;
         }
+
+        filterChain.doFilter(request, response);
     }
 }

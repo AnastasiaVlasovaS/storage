@@ -1,41 +1,57 @@
 package com.example.cloud.storage.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;           // ID пользователя
-    private String login;     // логин
-    private String password;  // пароль (захешированный)
+    private Long id;
 
-    public String getToken() {
-        return token;
-    }
+    @Column(unique = true, nullable = false)
+    private String login;
 
-    public void setToken(String token) {
-        this.token = token;
-    }
+    @Column(nullable = false)
+    private String password;
 
+    private String name;
+    private String email;
+
+    @Column(unique = true)
     private String token;
 
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+    private List<FileRecord> files;
 
-    // Геттеры и сеттеры
-    public String getLogin() {
-        return login;
-    }
-    public void setLogin(String login) {
+    // Конструкторы
+    public User() {}
+
+    public User(String login, String password) {
         this.login = login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-    public void setPassword(String password) {
         this.password = password;
     }
+
+    // Геттеры и сеттеры
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getLogin() { return login; }
+    public void setLogin(String login) { this.login = login; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getToken() { return token; }
+    public void setToken(String token) { this.token = token; }
+
+    public List<FileRecord> getFiles() { return files; }
+    public void setFiles(List<FileRecord> files) { this.files = files; }
 }
