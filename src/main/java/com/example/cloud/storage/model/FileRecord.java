@@ -19,7 +19,6 @@ public class FileRecord {
     @JoinColumn(name = "user_id")
     private User owner;
 
-    // Геттеры и сеттеры
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
